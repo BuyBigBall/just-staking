@@ -29,18 +29,19 @@ contract Staking {
     }
 
     function deposit(uint256 amount) public {
-        uint256 available = withdrawableOf(msg.sender);
-        totalStake = totalStake + amount + available - stake[msg.sender];
-        stake[msg.sender] = amount + available;
+        uint256 rewards = rewardsOf(msg.sender);
+        totalStake = totalStake + rewards + amount;
+        stake[msg.sender] = stake[msg.sender] +amount + rewards;
         rewardsPerUnitZero[msg.sender] = rewardsPerUnitNow;
         token.transferFrom(msg.sender, address(this), amount);           
     }
 
     function unstake(uint256 amount) public {
-        uint256 available = withdrawableOf(msg.sender);
-        require(amount <= available, "Staking: not enough stake balance");
-        totalStake = totalStake - stake[msg.sender] + available - amount;
-        stake[msg.sender] = available - amount;
+        uint256 rewards = rewardsOf(msg.sender);
+        uint256 staked = stake[msg.sender];
+        require(amount <= staked + rewards, "Staking: not enough stake balance");
+        totalStake = totalStake + rewards - amount;
+        stake[msg.sender] = staked + rewards - amount;
         rewardsPerUnitZero[msg.sender] = rewardsPerUnitNow;
         token.transfer(msg.sender, amount);           
     }
