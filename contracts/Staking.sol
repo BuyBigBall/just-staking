@@ -28,6 +28,7 @@ contract Staking {
         require(amount >= minDistribution, "Staking: Not enough to distribute");
         require(totalStake > 0, "Distribute: The deposit must be called before than destribute.");
         rewardsPerUnitNow = rewardsPerUnitNow + (amount * precision / totalStake);
+        console.log("how much allowance", amount);
         token.transferFrom(msg.sender, address(this), amount);
     }
 
@@ -37,6 +38,9 @@ contract Staking {
         uint256 rewards = rewardsOf(msg.sender);
         totalStake = totalStake + rewards + amount;
         stake[msg.sender] = stake[msg.sender] +amount + rewards;
+        console.log("stake amount : ", stake[msg.sender]);
+        console.log("stake amount : ", amount);
+        console.log("stake amount : ", rewards);
         rewardsPerUnitZero[msg.sender] = rewardsPerUnitNow;
         token.transferFrom(msg.sender, address(this), amount);           
     }
